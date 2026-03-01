@@ -11,10 +11,8 @@ import javax.swing.WindowConstants;
 public class AppProductos extends javax.swing.JFrame {
 
     String tipo = null;
-    Producto producto = new Producto();
 
     public AppProductos() {
-        initComponents();
         initComponents();
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ejemplo de Factura con SWING");
@@ -154,33 +152,34 @@ public class AppProductos extends javax.swing.JFrame {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
-                                .addComponent(chkContado))
+                                .addComponent(chkContado)
+                                .addGap(213, 213, 213))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addComponent(radAudio)
                                     .addComponent(jLabel2))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(radVideo)
-                                .addGap(18, 18, 18)
-                                .addComponent(radLinea)))
-                        .addGap(118, 118, 118))
+                                .addGap(210, 210, 210))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(btnCalcular)
+                        .addGap(98, 98, 98)
+                        .addComponent(btnBorrar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCerrar)
+                        .addGap(72, 72, 72))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(33, 33, 33)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                         .addComponent(txtCosto, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                        .addGap(41, 41, 41)
                         .addComponent(jLabel8)
-                        .addGap(27, 27, 27)
-                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radLinea)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(40, 40, 40))))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(72, 72, 72)
-                .addComponent(btnCalcular)
-                .addGap(28, 28, 28)
-                .addComponent(btnBorrar)
-                .addGap(18, 18, 18)
-                .addComponent(btnCerrar)
-                .addGap(19, 19, 19))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -297,6 +296,7 @@ public class AppProductos extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCalcularActionPerformed
 
     private void btnBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarActionPerformed
+
         this.borrar();
     }//GEN-LAST:event_btnBorrarActionPerformed
 
@@ -345,15 +345,22 @@ public class AppProductos extends javax.swing.JFrame {
     }
 
     public void calcularPago() {
-        if (this.txtNombre.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Indique un nombre de Producto");
+
+        if (txtNombre.getText().trim().isEmpty()) { // Agregué trim()
+            JOptionPane.showMessageDialog(null, "Ingrese un nombre de Producto");
+
         } else if (this.txtCosto.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "No hay datos para calcular");
+            JOptionPane.showMessageDialog(null, "Ingrese un valor paar el producto :" + txtNombre.getText());
+
         } else {
             try {
                 String nombre = this.txtNombre.getText();
                 long costo = Long.parseLong(this.txtCosto.getText());
-                String tipo = "";
+                if (costo <= 0) {
+                    JOptionPane.showMessageDialog(null, "Error: El costo debe ser mayor a 0");
+                    this.txtCosto.requestFocus(); // Opcional: enfocar el campo
+                    return;
+                }
 
                 if (this.radAudio.isSelected()) {
                     tipo = "AUDIO";
@@ -365,9 +372,11 @@ public class AppProductos extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "Seleccione un tipo de producto");
                     return;
                 }
+                boolean A = this.chkContado.isSelected();
+              
+                Producto producto = new Producto(nombre, costo, tipo, A);
 
-                Producto producto = new Producto(nombre, costo, tipo, this.chkContado.isSelected());
-
+                
                 // Obtener los valores calculados
                 long descuento = producto.getDescuento();
                 long incremento = producto.getIncremento();
@@ -379,8 +388,10 @@ public class AppProductos extends javax.swing.JFrame {
                 this.txtIncre.setText(String.valueOf(incremento));
                 this.txtIva.setText(String.valueOf(iva));
                 this.txtTotal.setText(String.valueOf(total));
+                
 
             } catch (NumberFormatException e) {
+
                 JOptionPane.showMessageDialog(null, "Error: El costo debe ser un número válido");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Error: Datos incorrectos");
