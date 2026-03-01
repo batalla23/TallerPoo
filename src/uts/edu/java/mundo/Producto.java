@@ -1,9 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package uts.edu.java.mundo;
-
 
 public class Producto {
     
@@ -16,53 +11,19 @@ public class Producto {
     private long total;
     private long iva;
 
-    public Producto(String nombre, long costo, String tipo,
-    boolean contado) {
+    public Producto(String nombre, long costo, String tipo, boolean contado) {
         this.nombre = nombre;
         this.costo = costo;
         this.tipo = tipo;
         this.contado = contado;
+        calcularValores(); // 👈 Calcular todo al crear el producto
     }
-    public Producto() {
-    }
-    public String getNombre() {
-        return nombre;
-    }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-    public long getCosto() {
-        return costo;
-    }
-    public void setCosto(long costo) {
-        this.costo = costo;
-    }
-    public String getTipo() {
-        return tipo;
-    }
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-    public boolean isContado() {
-        return contado;
-    }
-    public void setContado(boolean contado) {
-        this.contado = contado;
-    }
-    @Override
-    public String toString() {
-        return "Producto{" + "nombre=" + nombre
-        + ", costo=" + costo
-        + ", tipo=" + tipo
-        + ", contado=" + contado
-        + ", descuento=" + descuento
-        + ", incremento=" + incremento
-        + ", total=" + total + '}';
-    }
-
-    public long getDescuento() {
-        this.incremento = 0;
+    
+    // 🔧 NUEVO: Método que calcula todo de una vez
+    private void calcularValores() {
+        // Calcular descuento e incremento
         if (this.contado) {
+            this.incremento = 0;
             switch(this.tipo) {
                 case "AUDIO":
                     this.descuento = (long) (this.costo * 0.06);
@@ -73,14 +34,11 @@ public class Producto {
                 case "LINEA":
                     this.descuento = (long) (this.costo * 0.05);
                     break;
+                default:
+                    this.descuento = 0;
             }
-        }
-        return this.descuento;
-    }
-
-    public long getIncremento() {
-        this.descuento = 0;
-        if (!this.contado) {
+        } else {
+            this.descuento = 0;
             switch(this.tipo) {
                 case "AUDIO":
                     this.incremento = (long) (this.costo * 0.07);
@@ -91,25 +49,80 @@ public class Producto {
                 case "LINEA":
                     this.incremento = (long) (this.costo * 0.10);
                     break;
+                default:
+                    this.incremento = 0;
             }
         }
+        
+        // Calcular IVA y Total
+        this.iva = (long) ((this.costo + this.incremento - this.descuento) * 0.18);
+        this.total = this.costo + this.incremento - this.descuento + this.iva;
+    }
+   
+    // Getters y Setters
+    public String getNombre() {
+        return nombre;
+    }
+    
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    public long getCosto() {
+        return costo;
+    }
+    
+    public void setCosto(long costo) {
+        this.costo = costo;
+        calcularValores(); // 👈 Recalcular cuando cambia el costo
+    }
+    
+    public String getTipo() {
+        return tipo;
+    }
+    
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+        calcularValores(); // 👈 Recalcular cuando cambia el tipo
+    }
+    
+    public boolean isContado() {
+        return contado;
+    }
+    
+    public void setContado(boolean contado) {
+        this.contado = contado;
+        calcularValores(); // 👈 Recalcular cuando cambia contado
+    }
+    
+    // 🔧 Getters modificados - ya no calculan, solo retornan
+    public long getDescuento() {
+        return this.descuento;
+    }
+
+    public long getIncremento() {
         return this.incremento;
     }
-    public void setTotal(long total) {
-        this.total = total;
-    }
+    
     public long getTotal() {
-        total = (this.costo + this.incremento
-        - this.descuento + this.iva);
-        return total;
+        return this.total;
     }
+    
     public long getIva() {
-        iva = (long) ((this.costo + this.incremento
-        - this.descuento) * 0.18);
-        return iva;
+        return this.iva;
     }
-    public void setIva(long iva) {
-        this.iva = iva;
+    
+    // ❌ Eliminar setTotal() - no debería modificarse manualmente
+    
+    @Override
+    public String toString() {
+        return "Producto{" + "nombre=" + nombre
+                + ", costo=" + costo
+                + ", tipo=" + tipo
+                + ", contado=" + contado
+                + ", descuento=" + descuento
+                + ", incremento=" + incremento
+                + ", iva=" + iva
+                + ", total=" + total + '}';
     }
 }
-
